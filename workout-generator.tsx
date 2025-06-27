@@ -252,17 +252,11 @@ export default function WorkoutGenerator() {
     } else {
       // 特定部位中心のワークアウト
       const focusExercises = exercises.filter((ex) => ex.category === focusArea)
-      const otherExercises = exercises.filter((ex) => ex.category !== focusArea)
 
-      // メイン部位から3-4種目選択
-      const mainCount = Math.min(4, focusExercises.length)
+      // メイン部位から全種目選択（最大6種目）
       const shuffledFocus = [...focusExercises].sort(() => Math.random() - 0.5)
-      newWorkout.push(...shuffledFocus.slice(0, mainCount))
-
-      // 他の部位から2-3種目選択（補助として）
-      const otherCount = 6 - mainCount
-      const shuffledOthers = [...otherExercises].sort(() => Math.random() - 0.5)
-      newWorkout.push(...shuffledOthers.slice(0, otherCount))
+      const selectedCount = Math.min(6, focusExercises.length)
+      newWorkout.push(...shuffledFocus.slice(0, selectedCount))
     }
 
     // シャッフルして順序をランダムに
