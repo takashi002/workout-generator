@@ -6,9 +6,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-import { RefreshCw, Dumbbell, Target, Check, Play, Zap, ChevronLeft, ChevronRight } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+  RefreshCw,
+  Dumbbell,
+  Target,
+  Check,
+  Play,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Edit,
+  Trash2,
+} from "lucide-react"
 
 interface Exercise {
+  id: string
   name: string
   category: string
   sets: number
@@ -16,6 +32,7 @@ interface Exercise {
   rest: string
   difficulty: "初級" | "中級" | "上級"
   equipment: string
+  isCustom?: boolean
 }
 
 interface WorkoutSet {
@@ -38,9 +55,10 @@ interface WorkoutSession {
   completed: boolean
 }
 
-const exercises: Exercise[] = [
+const defaultExercises: Exercise[] = [
   // 胸筋
   {
+    id: "1",
     name: "腕立て伏せ",
     category: "胸筋",
     sets: 3,
@@ -50,6 +68,7 @@ const exercises: Exercise[] = [
     equipment: "自重",
   },
   {
+    id: "2",
     name: "ベンチプレス",
     category: "胸筋",
     sets: 4,
@@ -59,6 +78,7 @@ const exercises: Exercise[] = [
     equipment: "バーベル",
   },
   {
+    id: "3",
     name: "ダンベルフライ",
     category: "胸筋",
     sets: 3,
@@ -68,6 +88,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "4",
     name: "インクラインプッシュアップ",
     category: "胸筋",
     sets: 3,
@@ -78,8 +99,18 @@ const exercises: Exercise[] = [
   },
 
   // 背筋
-  { name: "懸垂", category: "背筋", sets: 3, reps: "5-10回", rest: "90秒", difficulty: "上級", equipment: "懸垂バー" },
   {
+    id: "5",
+    name: "懸垂",
+    category: "背筋",
+    sets: 3,
+    reps: "5-10回",
+    rest: "90秒",
+    difficulty: "上級",
+    equipment: "懸垂バー",
+  },
+  {
+    id: "6",
     name: "ラットプルダウン",
     category: "背筋",
     sets: 4,
@@ -89,6 +120,7 @@ const exercises: Exercise[] = [
     equipment: "マシン",
   },
   {
+    id: "7",
     name: "ベントオーバーロー",
     category: "背筋",
     sets: 4,
@@ -98,6 +130,7 @@ const exercises: Exercise[] = [
     equipment: "バーベル",
   },
   {
+    id: "8",
     name: "シーテッドロー",
     category: "背筋",
     sets: 3,
@@ -108,9 +141,28 @@ const exercises: Exercise[] = [
   },
 
   // 脚
-  { name: "スクワット", category: "脚", sets: 4, reps: "12-20回", rest: "90秒", difficulty: "初級", equipment: "自重" },
-  { name: "ランジ", category: "脚", sets: 3, reps: "10-15回/脚", rest: "60秒", difficulty: "初級", equipment: "自重" },
   {
+    id: "9",
+    name: "スクワット",
+    category: "脚",
+    sets: 4,
+    reps: "12-20回",
+    rest: "90秒",
+    difficulty: "初級",
+    equipment: "自重",
+  },
+  {
+    id: "10",
+    name: "ランジ",
+    category: "脚",
+    sets: 3,
+    reps: "10-15回/脚",
+    rest: "60秒",
+    difficulty: "初級",
+    equipment: "自重",
+  },
+  {
+    id: "11",
     name: "デッドリフト",
     category: "脚",
     sets: 4,
@@ -120,6 +172,7 @@ const exercises: Exercise[] = [
     equipment: "バーベル",
   },
   {
+    id: "12",
     name: "レッグプレス",
     category: "脚",
     sets: 4,
@@ -129,6 +182,7 @@ const exercises: Exercise[] = [
     equipment: "マシン",
   },
   {
+    id: "13",
     name: "カーフレイズ",
     category: "脚",
     sets: 3,
@@ -140,6 +194,7 @@ const exercises: Exercise[] = [
 
   // 肩
   {
+    id: "14",
     name: "ショルダープレス",
     category: "肩",
     sets: 3,
@@ -149,6 +204,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "15",
     name: "サイドレイズ",
     category: "肩",
     sets: 3,
@@ -158,6 +214,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "16",
     name: "フロントレイズ",
     category: "肩",
     sets: 3,
@@ -167,6 +224,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "17",
     name: "リアデルトフライ",
     category: "肩",
     sets: 3,
@@ -178,6 +236,7 @@ const exercises: Exercise[] = [
 
   // 腕
   {
+    id: "18",
     name: "バイセップカール",
     category: "腕",
     sets: 3,
@@ -187,6 +246,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "19",
     name: "トライセップエクステンション",
     category: "腕",
     sets: 3,
@@ -196,6 +256,7 @@ const exercises: Exercise[] = [
     equipment: "ダンベル",
   },
   {
+    id: "20",
     name: "ハンマーカール",
     category: "腕",
     sets: 3,
@@ -204,12 +265,40 @@ const exercises: Exercise[] = [
     difficulty: "初級",
     equipment: "ダンベル",
   },
-  { name: "ディップス", category: "腕", sets: 3, reps: "8-15回", rest: "75秒", difficulty: "中級", equipment: "自重" },
+  {
+    id: "21",
+    name: "ディップス",
+    category: "腕",
+    sets: 3,
+    reps: "8-15回",
+    rest: "75秒",
+    difficulty: "中級",
+    equipment: "自重",
+  },
 
   // 腹筋
-  { name: "プランク", category: "腹筋", sets: 3, reps: "30-60秒", rest: "45秒", difficulty: "初級", equipment: "自重" },
-  { name: "クランチ", category: "腹筋", sets: 3, reps: "15-25回", rest: "30秒", difficulty: "初級", equipment: "自重" },
   {
+    id: "22",
+    name: "プランク",
+    category: "腹筋",
+    sets: 3,
+    reps: "30-60秒",
+    rest: "45秒",
+    difficulty: "初級",
+    equipment: "自重",
+  },
+  {
+    id: "23",
+    name: "クランチ",
+    category: "腹筋",
+    sets: 3,
+    reps: "15-25回",
+    rest: "30秒",
+    difficulty: "初級",
+    equipment: "自重",
+  },
+  {
+    id: "24",
     name: "レッグレイズ",
     category: "腹筋",
     sets: 3,
@@ -219,6 +308,7 @@ const exercises: Exercise[] = [
     equipment: "自重",
   },
   {
+    id: "25",
     name: "バイシクルクランチ",
     category: "腹筋",
     sets: 3,
@@ -228,6 +318,7 @@ const exercises: Exercise[] = [
     equipment: "自重",
   },
   {
+    id: "26",
     name: "マウンテンクライマー",
     category: "腹筋",
     sets: 3,
@@ -259,6 +350,7 @@ export default function WorkoutApp() {
   const [restTimer, setRestTimer] = useState(0)
   const [isResting, setIsResting] = useState(false)
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null)
+  const [exercises, setExercises] = useState<Exercise[]>(defaultExercises)
 
   // WORKOUT GENERATOR states
   const [generatedWorkout, setGeneratedWorkout] = useState<Exercise[]>([])
@@ -269,20 +361,46 @@ export default function WorkoutApp() {
   const [calendarView, setCalendarView] = useState<"week" | "month">("month")
   const [currentDate, setCurrentDate] = useState(new Date())
 
-  // Load workout history from localStorage
+  // Exercise management states
+  const [isAddExerciseOpen, setIsAddExerciseOpen] = useState(false)
+  const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
+  const [exerciseForm, setExerciseForm] = useState({
+    name: "",
+    category: "胸筋",
+    sets: 3,
+    reps: "",
+    rest: "",
+    difficulty: "初級" as "初級" | "中級" | "上級",
+    equipment: "",
+  })
+
+  // Load data from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("workoutHistory")
-    if (saved) {
-      setWorkoutHistory(JSON.parse(saved))
+    const savedHistory = localStorage.getItem("workoutHistory")
+    if (savedHistory) {
+      setWorkoutHistory(JSON.parse(savedHistory))
+    }
+
+    const savedExercises = localStorage.getItem("customExercises")
+    if (savedExercises) {
+      const customExercises = JSON.parse(savedExercises)
+      setExercises([...defaultExercises, ...customExercises])
     }
   }, [])
 
-  // Save workout history to localStorage
+  // Save data to localStorage
   useEffect(() => {
     if (workoutHistory.length > 0) {
       localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory))
     }
   }, [workoutHistory])
+
+  useEffect(() => {
+    const customExercises = exercises.filter((ex) => ex.isCustom)
+    if (customExercises.length > 0) {
+      localStorage.setItem("customExercises", JSON.stringify(customExercises))
+    }
+  }, [exercises])
 
   // Rest timer
   useEffect(() => {
@@ -297,12 +415,12 @@ export default function WorkoutApp() {
     return () => clearInterval(interval)
   }, [isResting, restTimer])
 
-  const startWorkout = (exercises?: Exercise[]) => {
-    const workoutExercises = exercises || []
+  const startWorkout = (workoutExercises?: Exercise[]) => {
+    const exercisesToUse = workoutExercises || []
     const session: WorkoutSession = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
-      exercises: workoutExercises.map((exercise) => ({
+      exercises: exercisesToUse.map((exercise) => ({
         exercise,
         sets: Array(exercise.sets)
           .fill(null)
@@ -351,14 +469,12 @@ export default function WorkoutApp() {
       completed: true,
     }
 
-    // Move to next set
     if (setIndex < updatedSession.exercises[exerciseIndex].sets.length - 1) {
       updatedSession.exercises[exerciseIndex].currentSet = setIndex + 1
     }
 
     setCurrentSession(updatedSession)
 
-    // Start rest timer
     const restTime = Number.parseInt(updatedSession.exercises[exerciseIndex].exercise.rest)
     setRestTimer(restTime)
     setIsResting(true)
@@ -390,8 +506,10 @@ export default function WorkoutApp() {
       const categories = ["胸筋", "背筋", "脚", "肩", "腕", "腹筋"]
       categories.forEach((category) => {
         const categoryExercises = exercises.filter((ex) => ex.category === category)
-        const randomExercise = categoryExercises[Math.floor(Math.random() * categoryExercises.length)]
-        newWorkout.push(randomExercise)
+        if (categoryExercises.length > 0) {
+          const randomExercise = categoryExercises[Math.floor(Math.random() * categoryExercises.length)]
+          newWorkout.push(randomExercise)
+        }
       })
     } else {
       const focusExercises = exercises.filter((ex) => ex.category === focusArea)
@@ -434,6 +552,68 @@ export default function WorkoutApp() {
     setCurrentSession(updatedSession)
   }
 
+  // Exercise management functions
+  const resetExerciseForm = () => {
+    setExerciseForm({
+      name: "",
+      category: "胸筋",
+      sets: 3,
+      reps: "",
+      rest: "",
+      difficulty: "初級",
+      equipment: "",
+    })
+  }
+
+  const handleAddExercise = () => {
+    if (!exerciseForm.name.trim()) return
+
+    const newExercise: Exercise = {
+      id: Date.now().toString(),
+      ...exerciseForm,
+      isCustom: true,
+    }
+
+    setExercises((prev) => [...prev, newExercise])
+    setIsAddExerciseOpen(false)
+    resetExerciseForm()
+  }
+
+  const handleEditExercise = () => {
+    if (!editingExercise || !exerciseForm.name.trim()) return
+
+    setExercises((prev) =>
+      prev.map((ex) =>
+        ex.id === editingExercise.id
+          ? {
+              ...ex,
+              ...exerciseForm,
+            }
+          : ex,
+      ),
+    )
+
+    setEditingExercise(null)
+    resetExerciseForm()
+  }
+
+  const handleDeleteExercise = (exerciseId: string) => {
+    setExercises((prev) => prev.filter((ex) => ex.id !== exerciseId))
+  }
+
+  const openEditDialog = (exercise: Exercise) => {
+    setEditingExercise(exercise)
+    setExerciseForm({
+      name: exercise.name,
+      category: exercise.category,
+      sets: exercise.sets,
+      reps: exercise.reps,
+      rest: exercise.rest,
+      difficulty: exercise.difficulty,
+      equipment: exercise.equipment,
+    })
+  }
+
   // Calendar helper functions
   const getWorkoutDates = () => {
     return workoutHistory.map((session) => new Date(session.date))
@@ -443,7 +623,7 @@ export default function WorkoutApp() {
     const week = []
     const startOfWeek = new Date(date)
     const day = startOfWeek.getDay()
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1) // Monday start
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1)
     startOfWeek.setDate(diff)
 
     for (let i = 0; i < 7; i++) {
@@ -462,12 +642,10 @@ export default function WorkoutApp() {
     const startDate = new Date(firstDay)
     const endDate = new Date(lastDay)
 
-    // Adjust to start from Monday
     const startDay = startDate.getDay()
     const startDiff = startDate.getDate() - startDay + (startDay === 0 ? -6 : 1)
     startDate.setDate(startDiff)
 
-    // Adjust to end on Sunday
     const endDay = endDate.getDay()
     const endDiff = endDate.getDate() + (endDay === 0 ? 0 : 7 - endDay)
     endDate.setDate(endDiff)
@@ -504,80 +682,92 @@ export default function WorkoutApp() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4 text-white min-h-screen">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black p-2 sm:p-4 text-white min-h-screen">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="text-4xl">💪</div>
-            <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500">
+        <div className="text-center mb-4 sm:mb-8">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <div className="text-2xl sm:text-4xl">💪</div>
+            <h1 className="text-2xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500">
               MUSCLE TRACKER
             </h1>
-            <div className="text-4xl">🔥</div>
+            <div className="text-2xl sm:text-4xl">🔥</div>
           </div>
-          <p className="text-xl text-gray-300 font-semibold">
+          <p className="text-sm sm:text-xl text-gray-300 font-semibold px-2">
             限界を記録し、成長を実感せよ！最強のトレーニング記録アプリ
           </p>
         </div>
 
         <Tabs defaultValue="workout" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-gray-800 border border-gray-600">
-            <TabsTrigger value="workout" className="font-bold text-lg data-[state=active]:bg-red-600">
-              🏋️ ワークアウト
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4 sm:mb-8 bg-gray-800 border border-gray-600 h-auto">
+            <TabsTrigger
+              value="workout"
+              className="font-bold text-xs sm:text-lg data-[state=active]:bg-red-600 p-2 sm:p-3"
+            >
+              🏋️ <span className="hidden sm:inline">ワークアウト</span>
             </TabsTrigger>
-            <TabsTrigger value="generator" className="font-bold text-lg data-[state=active]:bg-orange-600">
-              ⚡ ジェネレーター
+            <TabsTrigger
+              value="generator"
+              className="font-bold text-xs sm:text-lg data-[state=active]:bg-orange-600 p-2 sm:p-3"
+            >
+              ⚡ <span className="hidden sm:inline">ジェネレーター</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="font-bold text-lg data-[state=active]:bg-blue-600">
-              📊 履歴
+            <TabsTrigger
+              value="history"
+              className="font-bold text-xs sm:text-lg data-[state=active]:bg-blue-600 p-2 sm:p-3"
+            >
+              📊 <span className="hidden sm:inline">履歴</span>
             </TabsTrigger>
-            <TabsTrigger value="stats" className="font-bold text-lg data-[state=active]:bg-green-600">
-              📈 統計
+            <TabsTrigger
+              value="stats"
+              className="font-bold text-xs sm:text-lg data-[state=active]:bg-green-600 p-2 sm:p-3"
+            >
+              📈 <span className="hidden sm:inline">統計</span>
             </TabsTrigger>
           </TabsList>
 
           {/* ワークアウト記録タブ */}
           <TabsContent value="workout">
             {!currentSession ? (
-              <div className="text-center py-16">
-                <div className="text-8xl mb-6">🏋️</div>
-                <h2 className="text-3xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+              <div className="text-center py-8 sm:py-16">
+                <div className="text-4xl sm:text-8xl mb-4 sm:mb-6">🏋️</div>
+                <h2 className="text-xl sm:text-3xl font-black mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
                   今日も限界を超えろ！
                 </h2>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4 px-2">
                   <Button
                     onClick={() => startWorkout()}
                     size="lg"
-                    className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white px-12 py-4 text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-110 mr-4"
+                    className="w-full sm:w-auto bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white px-6 sm:px-12 py-3 sm:py-4 text-lg sm:text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-105 sm:hover:scale-110"
                   >
-                    <Zap className="mr-3 h-6 w-6" />
+                    <Zap className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
                     フリーワークアウト開始
                   </Button>
                   {generatedWorkout.length > 0 && (
                     <Button
                       onClick={() => startWorkout(generatedWorkout)}
                       size="lg"
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-12 py-4 text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-110"
+                      className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 sm:px-12 py-3 sm:py-4 text-lg sm:text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-105 sm:hover:scale-110"
                     >
-                      <Target className="mr-3 h-6 w-6" />
+                      <Target className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
                       生成メニューで開始
                     </Button>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Rest Timer */}
                 {isResting && (
                   <Card className="bg-gradient-to-r from-red-900/50 to-orange-900/50 border border-red-500/30">
-                    <CardContent className="p-6 text-center">
-                      <h3 className="text-2xl font-black text-red-400 mb-2">🔥 REST TIME</h3>
-                      <div className="text-6xl font-black text-white mb-4">{formatTime(restTimer)}</div>
+                    <CardContent className="p-4 sm:p-6 text-center">
+                      <h3 className="text-xl sm:text-2xl font-black text-red-400 mb-2">🔥 REST TIME</h3>
+                      <div className="text-4xl sm:text-6xl font-black text-white mb-4">{formatTime(restTimer)}</div>
                       <Button
                         onClick={() => {
                           setIsResting(false)
                           setRestTimer(0)
                         }}
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
                       >
                         休憩終了
                       </Button>
@@ -586,29 +776,153 @@ export default function WorkoutApp() {
                 )}
 
                 {/* Current Workout */}
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3">
+                  <h2 className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
                     💪 現在のワークアウト
                   </h2>
-                  <Button onClick={finishWorkout} className="bg-green-600 hover:bg-green-700 font-bold">
-                    <Check className="mr-2 h-5 w-5" />
+                  <Button
+                    onClick={finishWorkout}
+                    className="bg-green-600 hover:bg-green-700 font-bold w-full sm:w-auto"
+                  >
+                    <Check className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     ワークアウト完了
                   </Button>
                 </div>
 
                 {/* Add Exercise - 部位別表示 */}
                 <Card className="bg-gray-800 border border-gray-600">
-                  <CardHeader>
-                    <CardTitle className="text-white font-black">💪 種目を追加</CardTitle>
+                  <CardHeader className="p-3 sm:p-6">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-white font-black text-lg sm:text-xl">💪 種目を追加</CardTitle>
+                      <Dialog
+                        open={isAddExerciseOpen}
+                        onOpenChange={(open) => {
+                          setIsAddExerciseOpen(open)
+                          if (open) {
+                            resetExerciseForm()
+                          }
+                        }}
+                      >
+                        <DialogTrigger asChild>
+                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                            <Plus className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">新規追加</span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-gray-800 border-gray-600 text-white max-w-md mx-2 sm:mx-auto">
+                          <DialogHeader>
+                            <DialogTitle className="text-white">新しい種目を追加</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="name">種目名</Label>
+                              <Input
+                                id="name"
+                                value={exerciseForm.name}
+                                onChange={(e) => setExerciseForm({ ...exerciseForm, name: e.target.value })}
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="category">部位</Label>
+                              <Select
+                                value={exerciseForm.category}
+                                onValueChange={(value) => setExerciseForm({ ...exerciseForm, category: value })}
+                              >
+                                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-gray-700 border-gray-600">
+                                  {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((cat) => (
+                                    <SelectItem key={cat} value={cat} className="text-white">
+                                      {cat}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label htmlFor="sets">セット数</Label>
+                                <Input
+                                  id="sets"
+                                  type="number"
+                                  value={exerciseForm.sets}
+                                  onChange={(e) =>
+                                    setExerciseForm({ ...exerciseForm, sets: Number.parseInt(e.target.value) || 1 })
+                                  }
+                                  className="bg-gray-700 border-gray-600 text-white"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="reps">回数</Label>
+                                <Input
+                                  id="reps"
+                                  value={exerciseForm.reps}
+                                  onChange={(e) => setExerciseForm({ ...exerciseForm, reps: e.target.value })}
+                                  placeholder="10-15回"
+                                  className="bg-gray-700 border-gray-600 text-white"
+                                />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label htmlFor="rest">休憩時間</Label>
+                                <Input
+                                  id="rest"
+                                  value={exerciseForm.rest}
+                                  onChange={(e) => setExerciseForm({ ...exerciseForm, rest: e.target.value })}
+                                  placeholder="60秒"
+                                  className="bg-gray-700 border-gray-600 text-white"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="difficulty">難易度</Label>
+                                <Select
+                                  value={exerciseForm.difficulty}
+                                  onValueChange={(value: "初級" | "中級" | "上級") =>
+                                    setExerciseForm({ ...exerciseForm, difficulty: value })
+                                  }
+                                >
+                                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-gray-700 border-gray-600">
+                                    {["初級", "中級", "上級"].map((diff) => (
+                                      <SelectItem key={diff} value={diff} className="text-white">
+                                        {diff}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <div>
+                              <Label htmlFor="equipment">器具</Label>
+                              <Input
+                                id="equipment"
+                                value={exerciseForm.equipment}
+                                onChange={(e) => setExerciseForm({ ...exerciseForm, equipment: e.target.value })}
+                                placeholder="ダンベル"
+                                className="bg-gray-700 border-gray-600 text-white"
+                              />
+                            </div>
+                            <Button onClick={handleAddExercise} className="w-full bg-green-600 hover:bg-green-700">
+                              追加
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0">
                     <Tabs defaultValue="胸筋" className="w-full">
-                      <TabsList className="grid w-full grid-cols-6 mb-4 bg-gray-700">
+                      <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-4 bg-gray-700 h-auto">
                         {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((category) => (
                           <TabsTrigger
                             key={category}
                             value={category}
-                            className="font-bold data-[state=active]:bg-red-600"
+                            className="font-bold text-xs sm:text-sm data-[state=active]:bg-red-600 p-1 sm:p-2"
                           >
                             {category}
                           </TabsTrigger>
@@ -617,32 +931,188 @@ export default function WorkoutApp() {
 
                       {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((category) => (
                         <TabsContent key={category} value={category}>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 gap-2 sm:gap-3">
                             {exercises
                               .filter((exercise) => exercise.category === category)
                               .map((exercise, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => addExerciseToSession(exercise)}
-                                  variant="outline"
-                                  className="text-left p-4 h-auto border-gray-600 hover:bg-gray-700 hover:border-red-500 transition-all duration-300"
-                                >
-                                  <div className="w-full">
-                                    <div className="flex justify-between items-start mb-2">
-                                      <div className="font-bold text-red-400 text-lg">{exercise.name}</div>
-                                      <Badge className={difficultyColors[exercise.difficulty] + " font-bold text-xs"}>
-                                        {exercise.difficulty}
-                                      </Badge>
-                                    </div>
-                                    <div className="text-sm text-gray-300 space-y-1">
-                                      <div>🏋️ {exercise.equipment}</div>
-                                      <div>
-                                        📊 {exercise.sets}セット × {exercise.reps}
+                                <div key={exercise.id} className="relative">
+                                  <Button
+                                    onClick={() => addExerciseToSession(exercise)}
+                                    variant="outline"
+                                    className="text-left p-3 sm:p-4 h-auto border-gray-600 hover:bg-gray-700 hover:border-red-500 transition-all duration-300 w-full"
+                                  >
+                                    <div className="w-full">
+                                      <div className="flex justify-between items-start mb-2">
+                                        <div className="font-bold text-red-400 text-sm sm:text-lg">{exercise.name}</div>
+                                        <div className="flex gap-1 sm:gap-2">
+                                          <Badge
+                                            className={difficultyColors[exercise.difficulty] + " font-bold text-xs"}
+                                          >
+                                            {exercise.difficulty}
+                                          </Badge>
+                                          {exercise.isCustom && (
+                                            <Badge className="bg-purple-600 text-white font-bold text-xs">
+                                              カスタム
+                                            </Badge>
+                                          )}
+                                        </div>
                                       </div>
-                                      <div>⏱️ 休憩: {exercise.rest}</div>
+                                      <div className="text-xs sm:text-sm text-gray-300 space-y-1">
+                                        <div>🏋️ {exercise.equipment}</div>
+                                        <div>
+                                          📊 {exercise.sets}セット × {exercise.reps}
+                                        </div>
+                                        <div>⏱️ 休憩: {exercise.rest}</div>
+                                      </div>
                                     </div>
-                                  </div>
-                                </Button>
+                                  </Button>
+                                  {exercise.isCustom && (
+                                    <div className="absolute top-2 right-2 flex gap-1">
+                                      <Dialog>
+                                        <DialogTrigger asChild>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-6 w-6 p-0 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white bg-transparent"
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              openEditDialog(exercise)
+                                            }}
+                                          >
+                                            <Edit className="h-3 w-3" />
+                                          </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="bg-gray-800 border-gray-600 text-white max-w-md mx-2 sm:mx-auto">
+                                          <DialogHeader>
+                                            <DialogTitle className="text-white">種目を編集</DialogTitle>
+                                          </DialogHeader>
+                                          <div className="space-y-4">
+                                            <div>
+                                              <Label htmlFor="edit-name">種目名</Label>
+                                              <Input
+                                                id="edit-name"
+                                                value={exerciseForm.name}
+                                                onChange={(e) =>
+                                                  setExerciseForm({ ...exerciseForm, name: e.target.value })
+                                                }
+                                                className="bg-gray-700 border-gray-600 text-white"
+                                              />
+                                            </div>
+                                            <div>
+                                              <Label htmlFor="edit-category">部位</Label>
+                                              <Select
+                                                value={exerciseForm.category}
+                                                onValueChange={(value) =>
+                                                  setExerciseForm({ ...exerciseForm, category: value })
+                                                }
+                                              >
+                                                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                                                  <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-gray-700 border-gray-600">
+                                                  {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((cat) => (
+                                                    <SelectItem key={cat} value={cat} className="text-white">
+                                                      {cat}
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                              <div>
+                                                <Label htmlFor="edit-sets">セット数</Label>
+                                                <Input
+                                                  id="edit-sets"
+                                                  type="number"
+                                                  value={exerciseForm.sets}
+                                                  onChange={(e) =>
+                                                    setExerciseForm({
+                                                      ...exerciseForm,
+                                                      sets: Number.parseInt(e.target.value) || 1,
+                                                    })
+                                                  }
+                                                  className="bg-gray-700 border-gray-600 text-white"
+                                                />
+                                              </div>
+                                              <div>
+                                                <Label htmlFor="edit-reps">回数</Label>
+                                                <Input
+                                                  id="edit-reps"
+                                                  value={exerciseForm.reps}
+                                                  onChange={(e) =>
+                                                    setExerciseForm({ ...exerciseForm, reps: e.target.value })
+                                                  }
+                                                  className="bg-gray-700 border-gray-600 text-white"
+                                                />
+                                              </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                              <div>
+                                                <Label htmlFor="edit-rest">休憩時間</Label>
+                                                <Input
+                                                  id="edit-rest"
+                                                  value={exerciseForm.rest}
+                                                  onChange={(e) =>
+                                                    setExerciseForm({ ...exerciseForm, rest: e.target.value })
+                                                  }
+                                                  className="bg-gray-700 border-gray-600 text-white"
+                                                />
+                                              </div>
+                                              <div>
+                                                <Label htmlFor="edit-difficulty">難易度</Label>
+                                                <Select
+                                                  value={exerciseForm.difficulty}
+                                                  onValueChange={(value: "初級" | "中級" | "上級") =>
+                                                    setExerciseForm({ ...exerciseForm, difficulty: value })
+                                                  }
+                                                >
+                                                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent className="bg-gray-700 border-gray-600">
+                                                    {["初級", "中級", "上級"].map((diff) => (
+                                                      <SelectItem key={diff} value={diff} className="text-white">
+                                                        {diff}
+                                                      </SelectItem>
+                                                    ))}
+                                                  </SelectContent>
+                                                </Select>
+                                              </div>
+                                            </div>
+                                            <div>
+                                              <Label htmlFor="edit-equipment">器具</Label>
+                                              <Input
+                                                id="edit-equipment"
+                                                value={exerciseForm.equipment}
+                                                onChange={(e) =>
+                                                  setExerciseForm({ ...exerciseForm, equipment: e.target.value })
+                                                }
+                                                className="bg-gray-700 border-gray-600 text-white"
+                                              />
+                                            </div>
+                                            <Button
+                                              onClick={handleEditExercise}
+                                              className="w-full bg-blue-600 hover:bg-blue-700"
+                                            >
+                                              更新
+                                            </Button>
+                                          </div>
+                                        </DialogContent>
+                                      </Dialog>
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleDeleteExercise(exercise.id)
+                                        }}
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-6 w-6 p-0 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
                               ))}
                           </div>
                         </TabsContent>
@@ -652,17 +1122,19 @@ export default function WorkoutApp() {
                 </Card>
 
                 {/* Exercise List */}
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {currentSession.exercises.map((workoutExercise, exerciseIndex) => (
                     <Card key={exerciseIndex} className="bg-gray-800 border border-gray-600">
-                      <CardHeader>
-                        <div className="flex justify-between items-center">
-                          <CardTitle className="text-white font-black">{workoutExercise.exercise.name}</CardTitle>
-                          <div className="flex items-center gap-2">
+                      <CardHeader className="p-3 sm:p-6">
+                        <div className="flex justify-between items-start gap-2">
+                          <CardTitle className="text-white font-black text-sm sm:text-lg">
+                            {workoutExercise.exercise.name}
+                          </CardTitle>
+                          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                             <Badge
                               className={
                                 categoryColors[workoutExercise.exercise.category as keyof typeof categoryColors] +
-                                " font-bold"
+                                " font-bold text-xs"
                               }
                             >
                               {workoutExercise.exercise.category}
@@ -671,19 +1143,19 @@ export default function WorkoutApp() {
                               onClick={() => removeExerciseFromSession(exerciseIndex)}
                               variant="outline"
                               size="sm"
-                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white h-6 w-6 p-0"
                             >
                               🗑️
                             </Button>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
+                      <CardContent className="p-3 sm:p-6 pt-0">
+                        <div className="space-y-2 sm:space-y-3">
                           {workoutExercise.sets.map((set, setIndex) => (
                             <div
                               key={setIndex}
-                              className={`p-4 rounded-lg border-2 ${
+                              className={`p-3 sm:p-4 rounded-lg border-2 ${
                                 set.completed
                                   ? "bg-green-900/30 border-green-500"
                                   : setIndex === workoutExercise.currentSet
@@ -691,24 +1163,24 @@ export default function WorkoutApp() {
                                     : "bg-gray-700 border-gray-600"
                               }`}
                             >
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-white">セット {setIndex + 1}</span>
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                <span className="font-bold text-white text-sm sm:text-base">セット {setIndex + 1}</span>
                                 {set.completed ? (
-                                  <div className="text-green-400 font-bold">
+                                  <div className="text-green-400 font-bold text-sm sm:text-base">
                                     ✅ {set.reps}回 × {set.weight}kg
                                   </div>
                                 ) : setIndex === workoutExercise.currentSet ? (
-                                  <div className="flex gap-2">
+                                  <div className="flex gap-2 w-full sm:w-auto">
                                     <Input
                                       type="number"
                                       placeholder="回数"
-                                      className="w-20 bg-gray-800 border-gray-600 text-white"
+                                      className="w-16 sm:w-20 bg-gray-800 border-gray-600 text-white text-sm"
                                       id={`reps-${exerciseIndex}-${setIndex}`}
                                     />
                                     <Input
                                       type="number"
                                       placeholder="重量"
-                                      className="w-20 bg-gray-800 border-gray-600 text-white"
+                                      className="w-16 sm:w-20 bg-gray-800 border-gray-600 text-white text-sm"
                                       id={`weight-${exerciseIndex}-${setIndex}`}
                                     />
                                     <Button
@@ -723,13 +1195,14 @@ export default function WorkoutApp() {
                                         const weight = Number.parseFloat(weightInput.value) || 0
                                         completeSet(exerciseIndex, setIndex, reps, weight)
                                       }}
-                                      className="bg-red-600 hover:bg-red-700"
+                                      className="bg-red-600 hover:bg-red-700 px-2 sm:px-3"
+                                      size="sm"
                                     >
-                                      <Check className="h-4 w-4" />
+                                      <Check className="h-3 w-3 sm:h-4 sm:w-4" />
                                     </Button>
                                   </div>
                                 ) : (
-                                  <span className="text-gray-500">待機中</span>
+                                  <span className="text-gray-500 text-sm">待機中</span>
                                 )}
                               </div>
                             </div>
@@ -745,18 +1218,18 @@ export default function WorkoutApp() {
 
           {/* ワークアウトジェネレータータブ */}
           <TabsContent value="generator">
-            <div className="space-y-8">
-              <div className="mb-8 p-6 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl border border-gray-600 shadow-2xl">
-                <h3 className="text-2xl font-black text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+            <div className="space-y-4 sm:space-y-8">
+              <div className="mb-4 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl border border-gray-600 shadow-2xl">
+                <h3 className="text-lg sm:text-2xl font-black text-center mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
                   🎯 TARGET MUSCLE
                 </h3>
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
                   {["全身バランス", "胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((area) => (
                     <Button
                       key={area}
                       variant={focusArea === area ? "default" : "outline"}
                       onClick={() => setFocusArea(area)}
-                      className={`font-bold text-lg px-6 py-3 transition-all duration-300 ${
+                      className={`font-bold text-xs sm:text-lg px-3 sm:px-6 py-2 sm:py-3 transition-all duration-300 ${
                         focusArea === area
                           ? "bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg transform scale-105"
                           : "border-2 border-gray-500 text-gray-300 hover:bg-gradient-to-r hover:from-red-600 hover:to-orange-600 hover:text-white hover:border-transparent hover:scale-105"
@@ -768,87 +1241,90 @@ export default function WorkoutApp() {
                 </div>
               </div>
 
-              <div className="text-center mb-8">
+              <div className="text-center mb-4 sm:mb-8">
                 <Button
                   onClick={generateWorkout}
                   disabled={isGenerating}
                   size="lg"
-                  className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 text-white px-12 py-4 text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                  className="w-full sm:w-auto bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 text-white px-6 sm:px-12 py-3 sm:py-4 text-lg sm:text-xl font-black rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-105 sm:hover:scale-110 disabled:opacity-50"
                 >
                   {isGenerating ? (
                     <>
-                      <RefreshCw className="mr-3 h-6 w-6 animate-spin" />🔥 GENERATING...
+                      <RefreshCw className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6 animate-spin" />🔥 GENERATING...
                     </>
                   ) : (
                     <>
-                      <Dumbbell className="mr-3 h-6 w-6" />💪 {focusArea}で限界突破！
+                      <Dumbbell className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />💪 {focusArea}で限界突破！
                     </>
                   )}
                 </Button>
               </div>
 
               {generatedWorkout.length > 0 && (
-                <div className="space-y-6">
-                  <div className="mb-6 p-6 bg-gradient-to-r from-red-900/50 to-orange-900/50 rounded-xl border border-red-500/30 shadow-xl">
-                    <h3 className="font-black text-xl text-red-400 mb-3 flex items-center gap-2">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-r from-red-900/50 to-orange-900/50 rounded-xl border border-red-500/30 shadow-xl">
+                    <h3 className="font-black text-lg sm:text-xl text-red-400 mb-3 flex items-center gap-2">
                       🔥 {focusArea}メニュー
                     </h3>
-                    <p className="text-gray-300 font-medium mb-4">
+                    <p className="text-gray-300 font-medium mb-4 text-sm sm:text-base">
                       {focusArea === "全身バランス"
                         ? "💥 全身を完全燃焼！各部位から最強の種目を厳選したバランス型メニューだ！"
                         : `🎯 ${focusArea}を徹底的に追い込む！メイン部位を限界まで鍛え上げる最強メニューだ！`}
                     </p>
                     <Button
                       onClick={() => startWorkout(generatedWorkout)}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-bold"
+                      className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-bold"
                     >
-                      <Play className="mr-2 h-5 w-5" />
+                      <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                       このメニューでワークアウト開始
                     </Button>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {generatedWorkout.map((exercise, index) => (
                       <Card
                         key={index}
                         className="hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-gray-800 to-gray-700 border border-gray-600 hover:border-red-500 hover:scale-105"
                       >
-                        <CardHeader className="pb-3">
+                        <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
                           <div className="flex items-start justify-between">
-                            <CardTitle className="text-xl font-black text-white">{exercise.name}</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-black text-white">{exercise.name}</CardTitle>
                             <Badge
                               className={
-                                categoryColors[exercise.category as keyof typeof categoryColors] + " font-bold"
+                                categoryColors[exercise.category as keyof typeof categoryColors] + " font-bold text-xs"
                               }
                             >
                               {exercise.category}
                             </Badge>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-1 sm:gap-2">
                             <Badge
                               variant="outline"
-                              className={difficultyColors[exercise.difficulty] + " font-bold border-2"}
+                              className={difficultyColors[exercise.difficulty] + " font-bold border-2 text-xs"}
                             >
                               {exercise.difficulty}
                             </Badge>
-                            <Badge variant="outline" className="border-2 border-gray-500 text-gray-300 font-bold">
+                            <Badge
+                              variant="outline"
+                              className="border-2 border-gray-500 text-gray-300 font-bold text-xs"
+                            >
                               {exercise.equipment}
                             </Badge>
                           </div>
                         </CardHeader>
-                        <CardContent className="pt-0">
-                          <div className="space-y-3">
+                        <CardContent className="pt-0 p-3 sm:p-6">
+                          <div className="space-y-2 sm:space-y-3">
                             <div className="flex justify-between">
-                              <span className="text-gray-400 font-semibold">セット数:</span>
-                              <span className="font-black text-white">{exercise.sets}セット</span>
+                              <span className="text-gray-400 font-semibold text-sm">セット数:</span>
+                              <span className="font-black text-white text-sm">{exercise.sets}セット</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-400 font-semibold">回数:</span>
-                              <span className="font-black text-white">{exercise.reps}</span>
+                              <span className="text-gray-400 font-semibold text-sm">回数:</span>
+                              <span className="font-black text-white text-sm">{exercise.reps}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-400 font-semibold">休憩:</span>
-                              <span className="font-black text-white">{exercise.rest}</span>
+                              <span className="text-gray-400 font-semibold text-sm">休憩:</span>
+                              <span className="font-black text-white text-sm">{exercise.rest}</span>
                             </div>
                           </div>
                         </CardContent>
@@ -862,16 +1338,16 @@ export default function WorkoutApp() {
 
           {/* 履歴タブ */}
           <TabsContent value="history">
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h2 className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
                   📊 ワークアウト履歴
                 </h2>
                 {workoutHistory.length > 0 && (
                   <Button
                     onClick={clearAllHistory}
                     variant="outline"
-                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold bg-transparent"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-bold bg-transparent w-full sm:w-auto"
                   >
                     🗑️ 全履歴削除
                   </Button>
@@ -879,51 +1355,58 @@ export default function WorkoutApp() {
               </div>
 
               {workoutHistory.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="text-8xl mb-6">📊</div>
-                  <p className="text-gray-400 text-2xl font-bold">まだ記録がありません</p>
-                  <p className="text-gray-500 text-lg">ワークアウトを開始して記録を作りましょう！</p>
+                <div className="text-center py-8 sm:py-16">
+                  <div className="text-4xl sm:text-8xl mb-4 sm:mb-6">📊</div>
+                  <p className="text-gray-400 text-lg sm:text-2xl font-bold">まだ記録がありません</p>
+                  <p className="text-gray-500 text-sm sm:text-lg">ワークアウトを開始して記録を作りましょう！</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {workoutHistory.map((session) => (
                     <Card key={session.id} className="bg-gray-800 border border-gray-600">
-                      <CardHeader>
-                        <div className="flex justify-between items-center">
-                          <CardTitle className="text-white font-black">
+                      <CardHeader className="p-3 sm:p-6">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                          <CardTitle className="text-white font-black text-sm sm:text-lg">
                             {new Date(session.date).toLocaleDateString("ja-JP")}{" "}
                             {new Date(session.date).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}
                           </CardTitle>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-blue-600 text-white font-bold">{session.duration}分</Badge>
-                            <Badge className="bg-green-600 text-white font-bold">{session.exercises.length}種目</Badge>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge className="bg-blue-600 text-white font-bold text-xs">{session.duration}分</Badge>
+                            <Badge className="bg-green-600 text-white font-bold text-xs">
+                              {session.exercises.length}種目
+                            </Badge>
                             <Button
                               onClick={() => deleteWorkoutSession(session.id)}
                               variant="outline"
                               size="sm"
-                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white h-6 w-6 p-0"
                             >
                               🗑️
                             </Button>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="p-3 sm:p-6 pt-0">
                         <div className="space-y-2">
                           {session.exercises.map((workoutExercise, index) => (
-                            <div key={index} className="flex justify-between items-center p-3 bg-gray-700 rounded">
+                            <div
+                              key={index}
+                              className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 sm:p-3 bg-gray-700 rounded gap-2"
+                            >
                               <div>
-                                <span className="text-white font-semibold">{workoutExercise.exercise.name}</span>
-                                <span className="text-gray-400 ml-2 text-sm">
+                                <span className="text-white font-semibold text-sm sm:text-base">
+                                  {workoutExercise.exercise.name}
+                                </span>
+                                <span className="text-gray-400 ml-2 text-xs sm:text-sm">
                                   ({workoutExercise.exercise.category})
                                 </span>
                               </div>
-                              <div className="text-right">
-                                <div className="text-gray-300 font-bold">
+                              <div className="text-left sm:text-right">
+                                <div className="text-gray-300 font-bold text-xs sm:text-sm">
                                   {workoutExercise.sets.filter((set) => set.completed).length}/
                                   {workoutExercise.sets.length}セット完了
                                 </div>
-                                <div className="text-sm text-gray-400">
+                                <div className="text-xs text-gray-400">
                                   {workoutExercise.sets
                                     .filter((set) => set.completed)
                                     .map((set, i) => `${set.reps}×${set.weight}kg`)
@@ -943,34 +1426,34 @@ export default function WorkoutApp() {
 
           {/* 統計タブ */}
           <TabsContent value="stats">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
                 📈 トレーニング統計
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                 <Card className="bg-gradient-to-br from-red-900/30 to-red-800/30 border border-red-500/30">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-2">🔥</div>
-                    <div className="text-3xl font-black text-white mb-2">{workoutHistory.length}</div>
-                    <div className="text-red-400 font-bold">総ワークアウト数</div>
+                  <CardContent className="p-4 sm:p-6 text-center">
+                    <div className="text-2xl sm:text-4xl mb-2">🔥</div>
+                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">{workoutHistory.length}</div>
+                    <div className="text-red-400 font-bold text-sm sm:text-base">総ワークアウト数</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/30">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-2">⏱️</div>
-                    <div className="text-3xl font-black text-white mb-2">
+                  <CardContent className="p-4 sm:p-6 text-center">
+                    <div className="text-2xl sm:text-4xl mb-2">⏱️</div>
+                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">
                       {workoutHistory.reduce((total, session) => total + session.duration, 0)}
                     </div>
-                    <div className="text-blue-400 font-bold">総トレーニング時間（分）</div>
+                    <div className="text-blue-400 font-bold text-sm sm:text-base">総トレーニング時間（分）</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-500/30">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-2">💪</div>
-                    <div className="text-3xl font-black text-white mb-2">
+                  <CardContent className="p-4 sm:p-6 text-center">
+                    <div className="text-2xl sm:text-4xl mb-2">💪</div>
+                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">
                       {workoutHistory.reduce(
                         (total, session) =>
                           total +
@@ -982,35 +1465,39 @@ export default function WorkoutApp() {
                         0,
                       )}
                     </div>
-                    <div className="text-green-400 font-bold">総完了セット数</div>
+                    <div className="text-green-400 font-bold text-sm sm:text-base">総完了セット数</div>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Calendar View */}
               <Card className="bg-gray-800 border border-gray-600">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-white font-black">📅 ワークアウトカレンダー</CardTitle>
-                    <div className="flex gap-2">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <CardTitle className="text-white font-black text-lg sm:text-xl">
+                      📅 ワークアウトカレンダー
+                    </CardTitle>
+                    <div className="flex gap-2 w-full sm:w-auto">
                       <Button
                         onClick={() => setCalendarView("week")}
                         variant={calendarView === "week" ? "default" : "outline"}
-                        className={calendarView === "week" ? "bg-red-600 hover:bg-red-700" : ""}
+                        className={`flex-1 sm:flex-none ${calendarView === "week" ? "bg-red-600 hover:bg-red-700" : ""}`}
+                        size="sm"
                       >
                         週表示
                       </Button>
                       <Button
                         onClick={() => setCalendarView("month")}
                         variant={calendarView === "month" ? "default" : "outline"}
-                        className={calendarView === "month" ? "bg-red-600 hover:bg-red-700" : ""}
+                        className={`flex-1 sm:flex-none ${calendarView === "month" ? "bg-red-600 hover:bg-red-700" : ""}`}
+                        size="sm"
                       >
                         月表示
                       </Button>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-3 sm:p-6 pt-0">
                   <div className="mb-4 flex justify-between items-center">
                     <Button
                       onClick={() => {
@@ -1025,9 +1512,9 @@ export default function WorkoutApp() {
                       variant="outline"
                       size="sm"
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-lg sm:text-xl font-bold text-white text-center">
                       {calendarView === "month"
                         ? `${currentDate.getFullYear()}年 ${currentDate.getMonth() + 1}月`
                         : `${currentDate.getFullYear()}年 ${currentDate.getMonth() + 1}月 第${Math.ceil(
@@ -1047,25 +1534,25 @@ export default function WorkoutApp() {
                       variant="outline"
                       size="sm"
                     >
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </div>
 
                   {calendarView === "week" ? (
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2">
                       {["月", "火", "水", "木", "金", "土", "日"].map((day) => (
-                        <div key={day} className="text-center font-bold text-gray-400 p-2">
+                        <div key={day} className="text-center font-bold text-gray-400 p-1 sm:p-2 text-xs sm:text-sm">
                           {day}
                         </div>
                       ))}
                       {getWeekDates(currentDate).map((date, index) => (
                         <div
                           key={index}
-                          className={`p-4 border rounded-lg text-center ${
+                          className={`p-2 sm:p-4 border rounded-lg text-center ${
                             hasWorkoutOnDate(date) ? "bg-red-600/30 border-red-500" : "bg-gray-700 border-gray-600"
                           }`}
                         >
-                          <div className="text-white font-bold">{date.getDate()}</div>
+                          <div className="text-white font-bold text-xs sm:text-sm">{date.getDate()}</div>
                           {hasWorkoutOnDate(date) && (
                             <div className="text-xs text-red-400 mt-1">🔥 {getWorkoutCountOnDate(date)}回</div>
                           )}
@@ -1075,14 +1562,14 @@ export default function WorkoutApp() {
                   ) : (
                     <div className="grid grid-cols-7 gap-1">
                       {["月", "火", "水", "木", "金", "土", "日"].map((day) => (
-                        <div key={day} className="text-center font-bold text-gray-400 p-2">
+                        <div key={day} className="text-center font-bold text-gray-400 p-1 sm:p-2 text-xs sm:text-sm">
                           {day}
                         </div>
                       ))}
                       {getMonthDates(currentDate).map((date, index) => (
                         <div
                           key={index}
-                          className={`p-2 border rounded text-center ${
+                          className={`p-1 sm:p-2 border rounded text-center ${
                             date.getMonth() !== currentDate.getMonth()
                               ? "bg-gray-900 border-gray-800 text-gray-600"
                               : hasWorkoutOnDate(date)
@@ -1090,7 +1577,7 @@ export default function WorkoutApp() {
                                 : "bg-gray-700 border-gray-600"
                           }`}
                         >
-                          <div className="text-sm font-bold">{date.getDate()}</div>
+                          <div className="text-xs sm:text-sm font-bold">{date.getDate()}</div>
                           {hasWorkoutOnDate(date) && (
                             <div className="text-xs text-red-400">🔥{getWorkoutCountOnDate(date)}</div>
                           )}
@@ -1102,10 +1589,10 @@ export default function WorkoutApp() {
               </Card>
 
               {workoutHistory.length === 0 && (
-                <div className="text-center py-16">
-                  <div className="text-8xl mb-6">📈</div>
-                  <p className="text-gray-400 text-2xl font-bold">統計データがありません</p>
-                  <p className="text-gray-500 text-lg">ワークアウトを記録して統計を確認しましょう！</p>
+                <div className="text-center py-8 sm:py-16">
+                  <div className="text-4xl sm:text-8xl mb-4 sm:mb-6">📈</div>
+                  <p className="text-gray-400 text-lg sm:text-2xl font-bold">統計データがありません</p>
+                  <p className="text-gray-500 text-sm sm:text-lg">ワークアウトを記録して統計を確認しましょう！</p>
                 </div>
               )}
             </div>
