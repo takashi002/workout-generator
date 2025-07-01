@@ -1494,29 +1494,31 @@ export default function WorkoutApp() {
                 📈 トレーニング統計
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <Card className="bg-gradient-to-br from-red-500 to-orange-500 border-0 shadow-xl">
-                  <CardContent className="p-4 sm:p-6 text-center">
-                    <div className="text-2xl sm:text-4xl mb-2">🔥</div>
-                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">{workoutHistory.length}</div>
-                    <div className="text-white font-bold text-sm sm:text-base">総ワークアウト数</div>
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <div className="text-lg sm:text-3xl mb-1 sm:mb-2">🔥</div>
+                    <div className="text-lg sm:text-2xl font-black text-white mb-1">{workoutHistory.length}</div>
+                    <div className="text-white font-bold text-xs sm:text-sm leading-tight">総ワークアウト数</div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-br from-blue-500 to-indigo-500 border-0 shadow-xl">
-                  <CardContent className="p-4 sm:p-6 text-center">
-                    <div className="text-2xl sm:text-4xl mb-2">⏱️</div>
-                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <div className="text-lg sm:text-3xl mb-1 sm:mb-2">⏱️</div>
+                    <div className="text-lg sm:text-2xl font-black text-white mb-1">
                       {workoutHistory.reduce((total, session) => total + session.duration, 0)}
                     </div>
-                    <div className="text-white font-bold text-sm sm:text-base">総トレーニング時間（分）</div>
+                    <div className="text-white font-bold text-xs sm:text-sm leading-tight">
+                      総トレーニング時間（分）
+                    </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-br from-green-500 to-emerald-500 border-0 shadow-xl">
-                  <CardContent className="p-4 sm:p-6 text-center">
-                    <div className="text-2xl sm:text-4xl mb-2">💪</div>
-                    <div className="text-2xl sm:text-3xl font-black text-white mb-2">
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <div className="text-lg sm:text-3xl mb-1 sm:mb-2">💪</div>
+                    <div className="text-lg sm:text-2xl font-black text-white mb-1">
                       {workoutHistory.reduce(
                         (total, session) =>
                           total +
@@ -1528,7 +1530,7 @@ export default function WorkoutApp() {
                         0,
                       )}
                     </div>
-                    <div className="text-white font-bold text-sm sm:text-base">総完了セット数</div>
+                    <div className="text-white font-bold text-xs sm:text-sm leading-tight">総完了セット数</div>
                   </CardContent>
                 </Card>
               </div>
