@@ -1,5 +1,5 @@
-import WorkoutGenerator from "../workout-generator"
+import WorkoutApp from "../workout-app"
 
 export default function Page() {
-  return <WorkoutGenerator />
+  return <WorkoutApp />
 }
