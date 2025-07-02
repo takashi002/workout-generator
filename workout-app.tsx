@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,6 +23,7 @@ import {
   Plus,
   Edit,
   Trash2,
+  GripVertical,
 } from "lucide-react"
 
 interface Exercise {
@@ -33,6 +36,7 @@ interface Exercise {
   difficulty: "初級" | "中級" | "上級"
   equipment: string
   isCustom?: boolean
+  order?: number
 }
 
 interface WorkoutSet {
@@ -66,6 +70,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 1,
   },
   {
     id: "2",
@@ -76,6 +81,7 @@ const defaultExercises: Exercise[] = [
     rest: "90秒",
     difficulty: "中級",
     equipment: "バーベル",
+    order: 2,
   },
   {
     id: "3",
@@ -86,6 +92,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "中級",
     equipment: "ダンベル",
+    order: 3,
   },
   {
     id: "4",
@@ -96,6 +103,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 4,
   },
 
   // 背筋
@@ -108,6 +116,7 @@ const defaultExercises: Exercise[] = [
     rest: "90秒",
     difficulty: "上級",
     equipment: "懸垂バー",
+    order: 5,
   },
   {
     id: "6",
@@ -118,6 +127,7 @@ const defaultExercises: Exercise[] = [
     rest: "75秒",
     difficulty: "中級",
     equipment: "マシン",
+    order: 6,
   },
   {
     id: "7",
@@ -128,6 +138,7 @@ const defaultExercises: Exercise[] = [
     rest: "90秒",
     difficulty: "中級",
     equipment: "バーベル",
+    order: 7,
   },
   {
     id: "8",
@@ -138,6 +149,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "初級",
     equipment: "マシン",
+    order: 8,
   },
 
   // 脚
@@ -150,6 +162,7 @@ const defaultExercises: Exercise[] = [
     rest: "90秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 9,
   },
   {
     id: "10",
@@ -160,6 +173,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 10,
   },
   {
     id: "11",
@@ -170,6 +184,7 @@ const defaultExercises: Exercise[] = [
     rest: "120秒",
     difficulty: "上級",
     equipment: "バーベル",
+    order: 11,
   },
   {
     id: "12",
@@ -180,6 +195,7 @@ const defaultExercises: Exercise[] = [
     rest: "75秒",
     difficulty: "中級",
     equipment: "マシン",
+    order: 12,
   },
   {
     id: "13",
@@ -190,6 +206,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 13,
   },
 
   // 肩
@@ -202,6 +219,7 @@ const defaultExercises: Exercise[] = [
     rest: "75秒",
     difficulty: "中級",
     equipment: "ダンベル",
+    order: 14,
   },
   {
     id: "15",
@@ -212,6 +230,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "ダンベル",
+    order: 15,
   },
   {
     id: "16",
@@ -222,6 +241,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "ダンベル",
+    order: 16,
   },
   {
     id: "17",
@@ -232,6 +252,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "中級",
     equipment: "ダンベル",
+    order: 17,
   },
 
   // 腕
@@ -244,6 +265,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "ダンベル",
+    order: 18,
   },
   {
     id: "19",
@@ -254,6 +276,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "中級",
     equipment: "ダンベル",
+    order: 19,
   },
   {
     id: "20",
@@ -264,6 +287,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "ダンベル",
+    order: 20,
   },
   {
     id: "21",
@@ -274,6 +298,7 @@ const defaultExercises: Exercise[] = [
     rest: "75秒",
     difficulty: "中級",
     equipment: "自重",
+    order: 21,
   },
 
   // 腹筋
@@ -286,6 +311,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 22,
   },
   {
     id: "23",
@@ -296,6 +322,7 @@ const defaultExercises: Exercise[] = [
     rest: "30秒",
     difficulty: "初級",
     equipment: "自重",
+    order: 23,
   },
   {
     id: "24",
@@ -306,6 +333,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "中級",
     equipment: "自重",
+    order: 24,
   },
   {
     id: "25",
@@ -316,6 +344,7 @@ const defaultExercises: Exercise[] = [
     rest: "45秒",
     difficulty: "中級",
     equipment: "自重",
+    order: 25,
   },
   {
     id: "26",
@@ -326,6 +355,7 @@ const defaultExercises: Exercise[] = [
     rest: "60秒",
     difficulty: "中級",
     equipment: "自重",
+    order: 26,
   },
 ]
 
@@ -374,6 +404,10 @@ export default function WorkoutApp() {
     equipment: "",
   })
 
+  // Drag and drop states
+  const [draggedExercise, setDraggedExercise] = useState<Exercise | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
   // Load data from localStorage
   useEffect(() => {
     const savedHistory = localStorage.getItem("workoutHistory")
@@ -381,10 +415,13 @@ export default function WorkoutApp() {
       setWorkoutHistory(JSON.parse(savedHistory))
     }
 
-    const savedExercises = localStorage.getItem("customExercises")
+    const savedExercises = localStorage.getItem("allExercises")
     if (savedExercises) {
-      const customExercises = JSON.parse(savedExercises)
-      setExercises([...defaultExercises, ...customExercises])
+      const loadedExercises = JSON.parse(savedExercises)
+      setExercises(loadedExercises)
+    } else {
+      // 初回起動時にデフォルト種目を保存
+      localStorage.setItem("allExercises", JSON.stringify(defaultExercises))
     }
   }, [])
 
@@ -396,9 +433,8 @@ export default function WorkoutApp() {
   }, [workoutHistory])
 
   useEffect(() => {
-    const customExercises = exercises.filter((ex) => ex.isCustom)
-    if (customExercises.length > 0) {
-      localStorage.setItem("customExercises", JSON.stringify(customExercises))
+    if (exercises.length > 0) {
+      localStorage.setItem("allExercises", JSON.stringify(exercises))
     }
   }, [exercises])
 
@@ -568,10 +604,12 @@ export default function WorkoutApp() {
   const handleAddExercise = () => {
     if (!exerciseForm.name.trim()) return
 
+    const maxOrder = Math.max(...exercises.map((ex) => ex.order || 0), 0)
     const newExercise: Exercise = {
       id: Date.now().toString(),
       ...exerciseForm,
       isCustom: true,
+      order: maxOrder + 1,
     }
 
     setExercises((prev) => [...prev, newExercise])
@@ -612,6 +650,64 @@ export default function WorkoutApp() {
       difficulty: exercise.difficulty,
       equipment: exercise.equipment,
     })
+  }
+
+  // Drag and drop functions
+  const handleDragStart = (e: React.DragEvent, exercise: Exercise) => {
+    setDraggedExercise(exercise)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setDragOverIndex(index)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, targetExercise: Exercise, category: string) => {
+    e.preventDefault()
+    if (!draggedExercise || draggedExercise.id === targetExercise.id) {
+      setDraggedExercise(null)
+      setDragOverIndex(null)
+      return
+    }
+
+    const categoryExercises = exercises
+      .filter((ex) => ex.category === category)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+
+    const draggedIndex = categoryExercises.findIndex((ex) => ex.id === draggedExercise.id)
+    const targetIndex = categoryExercises.findIndex((ex) => ex.id === targetExercise.id)
+
+    if (draggedIndex === -1 || targetIndex === -1) return
+
+    // 同じカテゴリ内での並び替えのみ許可
+    if (draggedExercise.category !== category) {
+      setDraggedExercise(null)
+      setDragOverIndex(null)
+      return
+    }
+
+    const newCategoryExercises = [...categoryExercises]
+    const [draggedItem] = newCategoryExercises.splice(draggedIndex, 1)
+    newCategoryExercises.splice(targetIndex, 0, draggedItem)
+
+    // 新しい順序を設定
+    const updatedExercises = exercises.map((ex) => {
+      if (ex.category === category) {
+        const newIndex = newCategoryExercises.findIndex((newEx) => newEx.id === ex.id)
+        return { ...ex, order: newIndex + 1 }
+      }
+      return ex
+    })
+
+    setExercises(updatedExercises)
+    setDraggedExercise(null)
+    setDragOverIndex(null)
   }
 
   // Calendar helper functions
@@ -688,6 +784,13 @@ export default function WorkoutApp() {
       date.getMonth() === today.getMonth() &&
       date.getDate() === today.getDate()
     )
+  }
+
+  // Get sorted exercises by category
+  const getSortedExercisesByCategory = (category: string) => {
+    return exercises
+      .filter((exercise) => exercise.category === category)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
   }
 
   return (
@@ -968,215 +1071,224 @@ export default function WorkoutApp() {
 
                       {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((category) => (
                         <TabsContent key={category} value={category}>
+                          <div className="space-y-1 text-xs text-gray-500 mb-3">
+                            💡 ドラッグ&ドロップで種目の順序を変更できます
+                          </div>
                           <div className="grid grid-cols-1 gap-2 sm:gap-3">
-                            {exercises
-                              .filter((exercise) => exercise.category === category)
-                              .map((exercise, index) => (
-                                <div key={exercise.id} className="relative">
-                                  <Button
-                                    onClick={() => addExerciseToSession(exercise)}
-                                    variant="outline"
-                                    className="text-left p-3 sm:p-4 h-auto bg-white border-gray-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 transition-all duration-300 w-full shadow-sm hover:shadow-md"
-                                  >
-                                    <div className="w-full">
-                                      <div className="flex justify-between items-start mb-2">
+                            {getSortedExercisesByCategory(category).map((exercise, index) => (
+                              <div
+                                key={exercise.id}
+                                className={`relative transition-all duration-200 ${
+                                  dragOverIndex === index ? "transform scale-105" : ""
+                                }`}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, exercise)}
+                                onDragOver={(e) => handleDragOver(e, index)}
+                                onDragLeave={handleDragLeave}
+                                onDrop={(e) => handleDrop(e, exercise, category)}
+                              >
+                                <Button
+                                  onClick={() => addExerciseToSession(exercise)}
+                                  variant="outline"
+                                  className={`text-left p-3 sm:p-4 h-auto bg-white border-gray-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 transition-all duration-300 w-full shadow-sm hover:shadow-md cursor-pointer ${
+                                    dragOverIndex === index ? "border-blue-500 bg-blue-50" : ""
+                                  }`}
+                                >
+                                  <div className="w-full">
+                                    <div className="flex justify-between items-start mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
                                         <div className="font-bold text-gray-900 text-base sm:text-xl">
                                           {exercise.name}
                                         </div>
-                                        <div className="flex gap-1 sm:gap-2">
-                                          <Badge
-                                            className={
-                                              difficultyColors[exercise.difficulty] + " font-bold text-xs shadow-sm"
-                                            }
-                                          >
-                                            {exercise.difficulty}
-                                          </Badge>
-                                          {exercise.isCustom && (
-                                            <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs shadow-sm">
-                                              カスタム
-                                            </Badge>
-                                          )}
-                                        </div>
                                       </div>
-                                      <div className="text-sm sm:text-base text-gray-600 space-y-1">
-                                        <div>🏋️ {exercise.equipment}</div>
-                                        <div>
-                                          📊 {exercise.sets}セット × {exercise.reps}
-                                        </div>
-                                        <div>⏱️ 休憩: {exercise.rest}</div>
+                                      <div className="flex gap-1 sm:gap-2">
+                                        <Badge
+                                          className={
+                                            difficultyColors[exercise.difficulty] + " font-bold text-xs shadow-sm"
+                                          }
+                                        >
+                                          {exercise.difficulty}
+                                        </Badge>
+                                        {exercise.isCustom && (
+                                          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs shadow-sm">
+                                            カスタム
+                                          </Badge>
+                                        )}
                                       </div>
                                     </div>
-                                  </Button>
-                                  {exercise.isCustom && (
-                                    <div className="absolute top-2 right-2 flex gap-1">
-                                      <Dialog>
-                                        <DialogTrigger asChild>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="h-6 w-6 p-0 border-blue-400 text-blue-500 hover:bg-blue-500 hover:text-white bg-white shadow-sm"
-                                            onClick={(e) => {
-                                              e.stopPropagation()
-                                              openEditDialog(exercise)
-                                            }}
-                                          >
-                                            <Edit className="h-3 w-3" />
-                                          </Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="bg-white border border-gray-200 text-gray-900 max-w-md mx-2 sm:mx-auto shadow-xl">
-                                          <DialogHeader>
-                                            <DialogTitle className="text-gray-900 font-bold">種目を編集</DialogTitle>
-                                          </DialogHeader>
-                                          <div className="space-y-4">
-                                            <div>
-                                              <Label htmlFor="edit-name" className="text-gray-700 font-semibold">
-                                                種目名
-                                              </Label>
-                                              <Input
-                                                id="edit-name"
-                                                value={exerciseForm.name}
-                                                onChange={(e) =>
-                                                  setExerciseForm({ ...exerciseForm, name: e.target.value })
-                                                }
-                                                className="bg-gray-50 border-gray-300 text-gray-900"
-                                              />
-                                            </div>
-                                            <div>
-                                              <Label htmlFor="edit-category" className="text-gray-700 font-semibold">
-                                                部位
-                                              </Label>
-                                              <Select
-                                                value={exerciseForm.category}
-                                                onValueChange={(value) =>
-                                                  setExerciseForm({ ...exerciseForm, category: value })
-                                                }
-                                              >
-                                                <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
-                                                  <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-white border-gray-200">
-                                                  {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((cat) => (
-                                                    <SelectItem key={cat} value={cat} className="text-gray-900">
-                                                      {cat}
-                                                    </SelectItem>
-                                                  ))}
-                                                </SelectContent>
-                                              </Select>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-2">
-                                              <div>
-                                                <Label htmlFor="edit-sets" className="text-gray-700 font-semibold">
-                                                  セット数
-                                                </Label>
-                                                <Input
-                                                  id="edit-sets"
-                                                  type="number"
-                                                  value={exerciseForm.sets}
-                                                  onChange={(e) => {
-                                                    const value = e.target.value
-                                                    if (value === "") {
-                                                      setExerciseForm({ ...exerciseForm, sets: "" as any })
-                                                    } else {
-                                                      const numValue = Number.parseInt(value)
-                                                      if (!isNaN(numValue) && numValue > 0) {
-                                                        setExerciseForm({ ...exerciseForm, sets: numValue })
-                                                      }
-                                                    }
-                                                  }}
-                                                  className="bg-gray-50 border-gray-300 text-gray-900"
-                                                />
-                                              </div>
-                                              <div>
-                                                <Label htmlFor="edit-reps" className="text-gray-700 font-semibold">
-                                                  回数
-                                                </Label>
-                                                <Input
-                                                  id="edit-reps"
-                                                  value={exerciseForm.reps}
-                                                  onChange={(e) =>
-                                                    setExerciseForm({ ...exerciseForm, reps: e.target.value })
-                                                  }
-                                                  className="bg-gray-50 border-gray-300 text-gray-900"
-                                                />
-                                              </div>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-2">
-                                              <div>
-                                                <Label htmlFor="edit-rest" className="text-gray-700 font-semibold">
-                                                  休憩時間
-                                                </Label>
-                                                <Input
-                                                  id="edit-rest"
-                                                  value={exerciseForm.rest}
-                                                  onChange={(e) =>
-                                                    setExerciseForm({ ...exerciseForm, rest: e.target.value })
-                                                  }
-                                                  className="bg-gray-50 border-gray-300 text-gray-900"
-                                                />
-                                              </div>
-                                              <div>
-                                                <Label
-                                                  htmlFor="edit-difficulty"
-                                                  className="text-gray-700 font-semibold"
-                                                >
-                                                  難易度
-                                                </Label>
-                                                <Select
-                                                  value={exerciseForm.difficulty}
-                                                  onValueChange={(value: "初級" | "中級" | "上級") =>
-                                                    setExerciseForm({ ...exerciseForm, difficulty: value })
-                                                  }
-                                                >
-                                                  <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
-                                                    <SelectValue />
-                                                  </SelectTrigger>
-                                                  <SelectContent className="bg-white border-gray-200">
-                                                    {["初級", "中級", "上級"].map((diff) => (
-                                                      <SelectItem key={diff} value={diff} className="text-gray-900">
-                                                        {diff}
-                                                      </SelectItem>
-                                                    ))}
-                                                  </SelectContent>
-                                                </Select>
-                                              </div>
-                                            </div>
-                                            <div>
-                                              <Label htmlFor="edit-equipment" className="text-gray-700 font-semibold">
-                                                器具
-                                              </Label>
-                                              <Input
-                                                id="edit-equipment"
-                                                value={exerciseForm.equipment}
-                                                onChange={(e) =>
-                                                  setExerciseForm({ ...exerciseForm, equipment: e.target.value })
-                                                }
-                                                className="bg-gray-50 border-gray-300 text-gray-900"
-                                              />
-                                            </div>
-                                            <Button
-                                              onClick={handleEditExercise}
-                                              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white"
-                                            >
-                                              更新
-                                            </Button>
-                                          </div>
-                                        </DialogContent>
-                                      </Dialog>
+                                    <div className="text-sm sm:text-base text-gray-600 space-y-1 ml-6">
+                                      <div>🏋️ {exercise.equipment}</div>
+                                      <div>
+                                        📊 {exercise.sets}セット × {exercise.reps}
+                                      </div>
+                                      <div>⏱️ 休憩: {exercise.rest}</div>
+                                    </div>
+                                  </div>
+                                </Button>
+                                <div className="absolute top-2 right-2 flex gap-1">
+                                  <Dialog>
+                                    <DialogTrigger asChild>
                                       <Button
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleDeleteExercise(exercise.id)
-                                        }}
                                         size="sm"
                                         variant="outline"
-                                        className="h-6 w-6 p-0 border-red-400 text-red-500 hover:bg-red-500 hover:text-white bg-white shadow-sm"
+                                        className="h-6 w-6 p-0 border-blue-400 text-blue-500 hover:bg-blue-500 hover:text-white bg-white shadow-sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          openEditDialog(exercise)
+                                        }}
                                       >
-                                        <Trash2 className="h-3 w-3" />
+                                        <Edit className="h-3 w-3" />
                                       </Button>
-                                    </div>
-                                  )}
+                                    </DialogTrigger>
+                                    <DialogContent className="bg-white border border-gray-200 text-gray-900 max-w-md mx-2 sm:mx-auto shadow-xl">
+                                      <DialogHeader>
+                                        <DialogTitle className="text-gray-900 font-bold">種目を編集</DialogTitle>
+                                      </DialogHeader>
+                                      <div className="space-y-4">
+                                        <div>
+                                          <Label htmlFor="edit-name" className="text-gray-700 font-semibold">
+                                            種目名
+                                          </Label>
+                                          <Input
+                                            id="edit-name"
+                                            value={exerciseForm.name}
+                                            onChange={(e) => setExerciseForm({ ...exerciseForm, name: e.target.value })}
+                                            className="bg-gray-50 border-gray-300 text-gray-900"
+                                          />
+                                        </div>
+                                        <div>
+                                          <Label htmlFor="edit-category" className="text-gray-700 font-semibold">
+                                            部位
+                                          </Label>
+                                          <Select
+                                            value={exerciseForm.category}
+                                            onValueChange={(value) =>
+                                              setExerciseForm({ ...exerciseForm, category: value })
+                                            }
+                                          >
+                                            <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-white border-gray-200">
+                                              {["胸筋", "背筋", "脚", "肩", "腕", "腹筋"].map((cat) => (
+                                                <SelectItem key={cat} value={cat} className="text-gray-900">
+                                                  {cat}
+                                                </SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <Label htmlFor="edit-sets" className="text-gray-700 font-semibold">
+                                              セット数
+                                            </Label>
+                                            <Input
+                                              id="edit-sets"
+                                              type="number"
+                                              value={exerciseForm.sets}
+                                              onChange={(e) => {
+                                                const value = e.target.value
+                                                if (value === "") {
+                                                  setExerciseForm({ ...exerciseForm, sets: "" as any })
+                                                } else {
+                                                  const numValue = Number.parseInt(value)
+                                                  if (!isNaN(numValue) && numValue > 0) {
+                                                    setExerciseForm({ ...exerciseForm, sets: numValue })
+                                                  }
+                                                }
+                                              }}
+                                              className="bg-gray-50 border-gray-300 text-gray-900"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label htmlFor="edit-reps" className="text-gray-700 font-semibold">
+                                              回数
+                                            </Label>
+                                            <Input
+                                              id="edit-reps"
+                                              value={exerciseForm.reps}
+                                              onChange={(e) =>
+                                                setExerciseForm({ ...exerciseForm, reps: e.target.value })
+                                              }
+                                              className="bg-gray-50 border-gray-300 text-gray-900"
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <Label htmlFor="edit-rest" className="text-gray-700 font-semibold">
+                                              休憩時間
+                                            </Label>
+                                            <Input
+                                              id="edit-rest"
+                                              value={exerciseForm.rest}
+                                              onChange={(e) =>
+                                                setExerciseForm({ ...exerciseForm, rest: e.target.value })
+                                              }
+                                              className="bg-gray-50 border-gray-300 text-gray-900"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label htmlFor="edit-difficulty" className="text-gray-700 font-semibold">
+                                              難易度
+                                            </Label>
+                                            <Select
+                                              value={exerciseForm.difficulty}
+                                              onValueChange={(value: "初級" | "中級" | "上級") =>
+                                                setExerciseForm({ ...exerciseForm, difficulty: value })
+                                              }
+                                            >
+                                              <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
+                                                <SelectValue />
+                                              </SelectTrigger>
+                                              <SelectContent className="bg-white border-gray-200">
+                                                {["初級", "中級", "上級"].map((diff) => (
+                                                  <SelectItem key={diff} value={diff} className="text-gray-900">
+                                                    {diff}
+                                                  </SelectItem>
+                                                ))}
+                                              </SelectContent>
+                                            </Select>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <Label htmlFor="edit-equipment" className="text-gray-700 font-semibold">
+                                            器具
+                                          </Label>
+                                          <Input
+                                            id="edit-equipment"
+                                            value={exerciseForm.equipment}
+                                            onChange={(e) =>
+                                              setExerciseForm({ ...exerciseForm, equipment: e.target.value })
+                                            }
+                                            className="bg-gray-50 border-gray-300 text-gray-900"
+                                          />
+                                        </div>
+                                        <Button
+                                          onClick={handleEditExercise}
+                                          className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white"
+                                        >
+                                          更新
+                                        </Button>
+                                      </div>
+                                    </DialogContent>
+                                  </Dialog>
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleDeleteExercise(exercise.id)
+                                    }}
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 w-6 p-0 border-red-400 text-red-500 hover:bg-red-500 hover:text-white bg-white shadow-sm"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
                                 </div>
-                              ))}
+                              </div>
+                            ))}
                           </div>
                         </TabsContent>
                       ))}
