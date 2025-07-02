@@ -866,9 +866,17 @@ export default function WorkoutApp() {
                                   id="sets"
                                   type="number"
                                   value={exerciseForm.sets}
-                                  onChange={(e) =>
-                                    setExerciseForm({ ...exerciseForm, sets: Number.parseInt(e.target.value) || 1 })
-                                  }
+                                  onChange={(e) => {
+                                    const value = e.target.value
+                                    if (value === "") {
+                                      setExerciseForm({ ...exerciseForm, sets: "" as any })
+                                    } else {
+                                      const numValue = Number.parseInt(value)
+                                      if (!isNaN(numValue) && numValue > 0) {
+                                        setExerciseForm({ ...exerciseForm, sets: numValue })
+                                      }
+                                    }
+                                  }}
                                   className="bg-gray-50 border-gray-300 text-gray-900"
                                 />
                               </div>
@@ -1064,12 +1072,17 @@ export default function WorkoutApp() {
                                                   id="edit-sets"
                                                   type="number"
                                                   value={exerciseForm.sets}
-                                                  onChange={(e) =>
-                                                    setExerciseForm({
-                                                      ...exerciseForm,
-                                                      sets: Number.parseInt(e.target.value) || 1,
-                                                    })
-                                                  }
+                                                  onChange={(e) => {
+                                                    const value = e.target.value
+                                                    if (value === "") {
+                                                      setExerciseForm({ ...exerciseForm, sets: "" as any })
+                                                    } else {
+                                                      const numValue = Number.parseInt(value)
+                                                      if (!isNaN(numValue) && numValue > 0) {
+                                                        setExerciseForm({ ...exerciseForm, sets: numValue })
+                                                      }
+                                                    }
+                                                  }}
                                                   className="bg-gray-50 border-gray-300 text-gray-900"
                                                 />
                                               </div>
