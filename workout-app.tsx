@@ -400,7 +400,6 @@ export default function WorkoutApp() {
     sets: 3,
     reps: "",
     rest: "",
-    difficulty: "初級" as "初級" | "中級" | "上級",
     equipment: "",
   })
 
@@ -596,7 +595,6 @@ export default function WorkoutApp() {
       sets: 3,
       reps: "",
       rest: "",
-      difficulty: "初級",
       equipment: "",
     })
   }
@@ -608,6 +606,7 @@ export default function WorkoutApp() {
     const newExercise: Exercise = {
       id: Date.now().toString(),
       ...exerciseForm,
+      difficulty: "初級",
       isCustom: true,
       order: maxOrder + 1,
     }
@@ -647,7 +646,6 @@ export default function WorkoutApp() {
       sets: exercise.sets,
       reps: exercise.reps,
       rest: exercise.rest,
-      difficulty: exercise.difficulty,
       equipment: exercise.equipment,
     })
   }
@@ -1010,39 +1008,17 @@ export default function WorkoutApp() {
                                 />
                               </div>
                               <div>
-                                <Label htmlFor="difficulty" className="text-gray-700 font-semibold">
-                                  難易度
+                                <Label htmlFor="equipment" className="text-gray-700 font-semibold">
+                                  器具
                                 </Label>
-                                <Select
-                                  value={exerciseForm.difficulty}
-                                  onValueChange={(value: "初級" | "中級" | "上級") =>
-                                    setExerciseForm({ ...exerciseForm, difficulty: value })
-                                  }
-                                >
-                                  <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-white border-gray-200">
-                                    {["初級", "中級", "上級"].map((diff) => (
-                                      <SelectItem key={diff} value={diff} className="text-gray-900">
-                                        {diff}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Input
+                                  id="equipment"
+                                  value={exerciseForm.equipment}
+                                  onChange={(e) => setExerciseForm({ ...exerciseForm, equipment: e.target.value })}
+                                  placeholder="ダンベル"
+                                  className="bg-gray-50 border-gray-300 text-gray-900"
+                                />
                               </div>
-                            </div>
-                            <div>
-                              <Label htmlFor="equipment" className="text-gray-700 font-semibold">
-                                器具
-                              </Label>
-                              <Input
-                                id="equipment"
-                                value={exerciseForm.equipment}
-                                onChange={(e) => setExerciseForm({ ...exerciseForm, equipment: e.target.value })}
-                                placeholder="ダンベル"
-                                className="bg-gray-50 border-gray-300 text-gray-900"
-                              />
                             </div>
                             <Button
                               onClick={handleAddExercise}
@@ -1103,13 +1079,6 @@ export default function WorkoutApp() {
                                         </div>
                                       </div>
                                       <div className="flex gap-1 sm:gap-2">
-                                        <Badge
-                                          className={
-                                            difficultyColors[exercise.difficulty] + " font-bold text-xs shadow-sm"
-                                          }
-                                        >
-                                          {exercise.difficulty}
-                                        </Badge>
                                         {exercise.isCustom && (
                                           <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs shadow-sm">
                                             カスタム
@@ -1216,7 +1185,7 @@ export default function WorkoutApp() {
                                             />
                                           </div>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2">
+                                        <div className="grid grid-cols-1 gap-2">
                                           <div>
                                             <Label htmlFor="edit-rest" className="text-gray-700 font-semibold">
                                               休憩時間
@@ -1231,40 +1200,18 @@ export default function WorkoutApp() {
                                             />
                                           </div>
                                           <div>
-                                            <Label htmlFor="edit-difficulty" className="text-gray-700 font-semibold">
-                                              難易度
+                                            <Label htmlFor="edit-equipment" className="text-gray-700 font-semibold">
+                                              器具
                                             </Label>
-                                            <Select
-                                              value={exerciseForm.difficulty}
-                                              onValueChange={(value: "初級" | "中級" | "上級") =>
-                                                setExerciseForm({ ...exerciseForm, difficulty: value })
+                                            <Input
+                                              id="edit-equipment"
+                                              value={exerciseForm.equipment}
+                                              onChange={(e) =>
+                                                setExerciseForm({ ...exerciseForm, equipment: e.target.value })
                                               }
-                                            >
-                                              <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
-                                                <SelectValue />
-                                              </SelectTrigger>
-                                              <SelectContent className="bg-white border-gray-200">
-                                                {["初級", "中級", "上級"].map((diff) => (
-                                                  <SelectItem key={diff} value={diff} className="text-gray-900">
-                                                    {diff}
-                                                  </SelectItem>
-                                                ))}
-                                              </SelectContent>
-                                            </Select>
+                                              className="bg-gray-50 border-gray-300 text-gray-900"
+                                            />
                                           </div>
-                                        </div>
-                                        <div>
-                                          <Label htmlFor="edit-equipment" className="text-gray-700 font-semibold">
-                                            器具
-                                          </Label>
-                                          <Input
-                                            id="edit-equipment"
-                                            value={exerciseForm.equipment}
-                                            onChange={(e) =>
-                                              setExerciseForm({ ...exerciseForm, equipment: e.target.value })
-                                            }
-                                            className="bg-gray-50 border-gray-300 text-gray-900"
-                                          />
                                         </div>
                                         <Button
                                           onClick={handleEditExercise}
@@ -1482,14 +1429,6 @@ export default function WorkoutApp() {
                             </Badge>
                           </div>
                           <div className="flex gap-1 sm:gap-2">
-                            <Badge
-                              variant="outline"
-                              className={
-                                difficultyColors[exercise.difficulty] + " font-bold border-2 text-xs shadow-sm"
-                              }
-                            >
-                              {exercise.difficulty}
-                            </Badge>
                             <Badge
                               variant="outline"
                               className="border-2 border-gray-400 text-gray-700 font-bold text-xs bg-white shadow-sm"
